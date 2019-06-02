@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Настя Виденеева](https://up.htmlacademy.ru/javascript/17/user/690889).
-* Наставник: `Неизвестно`.
+* Наставник: [Алексей Дорофеев](https://htmlacademy.ru/profile/id299055).
 
 ---
 
