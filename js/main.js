@@ -53,7 +53,7 @@ var renderPicture = function (picture) {
   likes.textContent = picture.likes;
 
   var comments = pictureElement.querySelector('.picture__comments');
-  comments.textContent = picture.comments;
+  comments.textContent = picture.comments.length;
   return pictureElement;
 };
 
