@@ -64,3 +64,68 @@ for (i = 0; i < NUMBER_OF_PHOTOS; i++) {
 // insert to .pictures
 var pictures = document.querySelector('.pictures');
 pictures.appendChild(fragment);
+
+
+// file upload
+var fileUpload = document.querySelector('#upload-file');
+var cancelUpload = document.querySelector('#upload-cancel');
+var editImage = document.querySelector('.img-upload__overlay');
+var image = document.querySelector('.img-upload__preview');
+var effectLevel = document.querySelector('.img-upload__effect-level');
+var effectLevelSlider = document.querySelector('.effect-level__pin');
+var effectLevelValue = document.querySelector('.effect-level__value');
+
+fileUpload.addEventListener('change', function () {
+  editImage.classList.remove('hidden');
+});
+
+cancelUpload.addEventListener('click', function () {
+  editImage.classList.add('hidden');
+});
+
+var removeFilters = function () {
+  image.className = 'img-upload__preview';
+};
+
+// применить нужный эффект при изменении значения .effects__radio:checked
+// для этого нужно добавить класс изображению .img-upload__preview (и удалить старый класс с эффектом)
+
+// отслеживаем CHANGE для каждой radio
+var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+// effects__preview--none
+
+var effectInputs = [];
+for (i = 0; i < EFFECTS.length; i++) {
+  effectInputs.push(document.querySelector('#effect-' + EFFECTS[i]));
+}
+
+for (i = 0; i < effectInputs.length; i++) {
+  var createListener = function (effectIndex) {
+    var listener = function () {
+      removeFilters();
+      image.classList.add('effects__preview--' + EFFECTS[effectIndex]);
+
+      // скрыть ползунок для эффекта, когда эффект none
+
+      // TODO: как скрыть его в самом начале?
+      if (EFFECTS[effectIndex] === 'none') {
+        effectLevel.classList.add('hidden');
+      } else {
+        if (effectLevel.classList.contains('hidden')) {
+          effectLevel.classList.remove('hidden');
+        }
+      }
+    };
+
+    return listener;
+  };
+  effectInputs[i].addEventListener('change', createListener(i));
+}
+
+
+// При изменении уровня интенсивности эффекта, CSS-стили элемента .img-upload__preview обновляются следующим образом:
+// Для эффекта «Хром» — filter: grayscale(0..1);
+// Для эффекта «Сепия» — filter: sepia(0..1);
+// Для эффекта «Марвин» — filter: invert(0..100%);
+// Для эффекта «Фобос» — filter: blur(0..3px);
+// Для эффекта «Зной» — filter: brightness(1..3).
