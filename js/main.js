@@ -1,66 +1,121 @@
 'use strict';
-var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-var NAMES = ['Артем', 'Вика', 'Ира', 'Кирилл', 'Кристина', 'Олег', 'Сергей', 'Юля'];
-var MAX_COMMENTS = 5;
-var NUMBER_OF_AVATARS = 6;
-var NUMBER_OF_PHOTOS = 25;
+var fileUpload = document.querySelector('#upload-file');
+var cancelUpload = document.querySelector('#upload-cancel');
+var editImage = document.querySelector('.img-upload__overlay');
+var image = document.querySelector('.img-upload__preview');
+var effectLevel = document.querySelector('.img-upload__effect-level');
+var effectLine = document.querySelector('.effect-level__line');
+var effectLevelSlider = document.querySelector('.effect-level__pin');
+var effectLevelDepth = document.querySelector('.effect-level__depth');
+var effectLevelValue = document.querySelector('.effect-level__value');
 
-var generateComment = function () {
-  var comment = {};
-  comment.avatar = 'img/avatar-' + Math.ceil(Math.random() * NUMBER_OF_AVATARS) + '.svg';
+var currentEffect = 'none';
 
-  var commentIndex = Math.floor(Math.random() * COMMENTS.length);
-  comment.message = COMMENTS[commentIndex];
-
-  var nameIndex = Math.floor(Math.random() * NAMES.length);
-  comment.name = NAMES[nameIndex];
-  return comment;
+var closeImageEditForm = function () {
+  editImage.classList.add('hidden');
 };
 
-var generateCommentsForPicture = function () {
-  var numberOfComments = Math.ceil(Math.random() * MAX_COMMENTS);
-  var comments = [];
-  for (var i = 0; i < numberOfComments; i++) {
-    comments.push(generateComment());
+// показать форму редактирования изображения
+// TODO: change не сработает, если вы попробуете загрузить ту же фотографию.
+fileUpload.addEventListener('change', function () {
+  editImage.classList.remove('hidden');
+
+  currentEffect = 'none';
+  // скрываем слайдер (фильтр не выбран)
+  effectLevel.classList.add('hidden');
+});
+
+// закрыть форму и сбросить значение #upload-file
+cancelUpload.addEventListener('click', function () {
+  fileUpload.value = '';
+  closeImageEditForm();
+});
+
+// закрыть форму при нажатии на Esc
+window.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === 27) {
+    fileUpload.value = '';
+    closeImageEditForm();
   }
-  return comments;
+});
+
+
+var EFFECT_MAX_VALUE = 100;
+var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+var effectFunctions = {
+  'chrome': function (effectValue) {
+    return 'filter: grayscale(' + effectValue / 100 + ')';
+  },
+  'sepia': function (effectValue) {
+    return 'filter: sepia(' + effectValue / 100 + ')';
+  },
+  'marvin': function (effectValue) {
+    return 'filter: invert(' + effectValue + '%)';
+  },
+  'phobos': function (effectValue) {
+    return 'filter: blur(' + effectValue / 100 * 3 + 'px)';
+  },
+  'heat': function (effectValue) {
+    return 'filter: brightness(' + (1 + effectValue / 100 * 2) + ')';
+  }
 };
 
-var makePicture = function (pictureNumber) {
-  var picture = {};
-  picture.url = 'photos/' + (pictureNumber + 1) + '.jpg';
-  picture.likes = Math.floor(Math.random() * 185 + 15);
-  picture.comments = generateCommentsForPicture();
-  return picture;
+var changeSliderPosition = function () {
+  effectLevelDepth.style.width = effectLevelValue.value + '%';
+  effectLevelSlider.style.left = effectLevelValue.value + '%';
 };
 
-var generatedPictures = [];
-for (var i = 0; i < NUMBER_OF_PHOTOS; i++) {
-  generatedPictures.push(makePicture(i));
+var getEffectValue = function () {
+  // длина слайдера
+  var lineWidth = effectLine.getBoundingClientRect().width;
+  // положение центра пина на слайдере относительно начала слайдера
+  var pinCenter = effectLevelSlider.getBoundingClientRect().x + effectLevelSlider.getBoundingClientRect().width / 2 - effectLine.getBoundingClientRect().x;
+  var newEffectValue = Math.round(pinCenter * EFFECT_MAX_VALUE / lineWidth);
+  return newEffectValue;
+};
+
+var applyEffect = function () {
+  image.style = effectFunctions[currentEffect](getEffectValue());
+};
+
+var removeEffects = function () {
+  image.className = 'img-upload__preview';
+};
+
+var effectInputs = [];
+for (var i = 0; i < EFFECTS.length; i++) {
+  effectInputs.push(document.querySelector('#effect-' + EFFECTS[i]));
 }
 
-// create html elements for pictures
-var pictureTemplate = document.querySelector('#picture').content.querySelector('a');
 
-var fragment = document.createDocumentFragment();
+var onEffectChange = function (effectIndex) {
+  var listener = function () {
+    removeEffects();
+    currentEffect = EFFECTS[effectIndex];
+    image.classList.add('effects__preview--' + currentEffect);
 
-var renderPicture = function (picture) {
-  var pictureElement = pictureTemplate.cloneNode(true);
-  var image = pictureElement.querySelector('img');
-  image.src = picture.url;
-
-  var likes = pictureElement.querySelector('.picture__likes');
-  likes.textContent = picture.likes;
-
-  var comments = pictureElement.querySelector('.picture__comments');
-  comments.textContent = picture.comments.length;
-  return pictureElement;
+    // скрыть ползунок для эффекта, когда эффект none
+    if (currentEffect === 'none') {
+      effectLevel.classList.add('hidden');
+    } else {
+      if (effectLevel.classList.contains('hidden')) {
+        effectLevel.classList.remove('hidden');
+      }
+      // сбрасываем значение ползунка
+      effectLevelValue.value = EFFECT_MAX_VALUE;
+      changeSliderPosition();
+      applyEffect(EFFECT_MAX_VALUE);
+    }
+  };
+  return listener;
 };
 
-for (i = 0; i < NUMBER_OF_PHOTOS; i++) {
-  fragment.appendChild(renderPicture(generatedPictures[i]));
+for (i = 0; i < effectInputs.length; i++) {
+  effectInputs[i].addEventListener('change', onEffectChange(i));
 }
 
-// insert to .pictures
-var pictures = document.querySelector('.pictures');
-pictures.appendChild(fragment);
+// изменяем уровень насыщенности фильтра
+effectLevelSlider.addEventListener('mouseup', function () {
+  applyEffect();
+});
+
