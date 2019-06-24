@@ -94,11 +94,6 @@ var onEffectChange = function (effectIndex) {
     currentEffect = EFFECTS[effectIndex];
     image.classList.add('effects__preview--' + currentEffect);
 
-    // сбрасываем значение ползунка
-    effectLevelValue.value = EFFECT_MAX_VALUE;
-    changeSliderPosition();
-    applyEffect(EFFECT_MAX_VALUE);
-
     // скрыть ползунок для эффекта, когда эффект none
     if (currentEffect === 'none') {
       effectLevel.classList.add('hidden');
@@ -106,6 +101,10 @@ var onEffectChange = function (effectIndex) {
       if (effectLevel.classList.contains('hidden')) {
         effectLevel.classList.remove('hidden');
       }
+      // сбрасываем значение ползунка
+      effectLevelValue.value = EFFECT_MAX_VALUE;
+      changeSliderPosition();
+      applyEffect(EFFECT_MAX_VALUE);
     }
   };
   return listener;
