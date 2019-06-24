@@ -6,7 +6,10 @@ var image = document.querySelector('.img-upload__preview');
 var effectLevel = document.querySelector('.img-upload__effect-level');
 var effectLine = document.querySelector('.effect-level__line');
 var effectLevelSlider = document.querySelector('.effect-level__pin');
+var effectLevelDepth = document.querySelector('.effect-level__depth');
 var effectLevelValue = document.querySelector('.effect-level__value');
+
+var currentEffect = 'none';
 
 var closeImageEditForm = function () {
   editImage.classList.add('hidden');
@@ -16,6 +19,10 @@ var closeImageEditForm = function () {
 // TODO: change не сработает, если вы попробуете загрузить ту же фотографию.
 fileUpload.addEventListener('change', function () {
   editImage.classList.remove('hidden');
+
+  currentEffect = 'none';
+  // скрываем слайдер (фильтр не выбран)
+  effectLevel.classList.add('hidden');
 });
 
 // закрыть форму и сбросить значение #upload-file
@@ -32,7 +39,7 @@ window.addEventListener('keydown', function (evt) {
   }
 });
 
-var EFFECT_MIN_VALUE = 0;
+
 var EFFECT_MAX_VALUE = 100;
 var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
 var effectFunctions = {
@@ -53,6 +60,24 @@ var effectFunctions = {
   }
 };
 
+var changeSliderPosition = function () {
+  effectLevelDepth.style.width = effectLevelValue.value + '%';
+  effectLevelSlider.style.left = effectLevelValue.value + '%';
+};
+
+var getEffectValue = function () {
+  // длина слайдера
+  var lineWidth = effectLine.getBoundingClientRect().width;
+  // положение центра пина на слайдере относительно начала слайдера
+  var pinCenter = effectLevelSlider.getBoundingClientRect().x + effectLevelSlider.getBoundingClientRect().width / 2 - effectLine.getBoundingClientRect().x;
+  var newEffectValue = Math.round(pinCenter * EFFECT_MAX_VALUE / lineWidth);
+  return newEffectValue;
+};
+
+var applyEffect = function () {
+  image.style = effectFunctions[currentEffect](getEffectValue());
+};
+
 var removeEffects = function () {
   image.className = 'img-upload__preview';
 };
@@ -62,7 +87,6 @@ for (var i = 0; i < EFFECTS.length; i++) {
   effectInputs.push(document.querySelector('#effect-' + EFFECTS[i]));
 }
 
-var currentEffect = 'none';
 
 var onEffectChange = function (effectIndex) {
   var listener = function () {
@@ -70,8 +94,12 @@ var onEffectChange = function (effectIndex) {
     currentEffect = EFFECTS[effectIndex];
     image.classList.add('effects__preview--' + currentEffect);
 
+    // сбрасываем значение ползунка
+    effectLevelValue.value = EFFECT_MAX_VALUE;
+    changeSliderPosition();
+    applyEffect(EFFECT_MAX_VALUE);
+
     // скрыть ползунок для эффекта, когда эффект none
-    // TODO: как скрыть его в самом начале?
     if (currentEffect === 'none') {
       effectLevel.classList.add('hidden');
     } else {
@@ -87,22 +115,8 @@ for (i = 0; i < effectInputs.length; i++) {
   effectInputs[i].addEventListener('change', onEffectChange(i));
 }
 
-var getEffectValue = function () {
-  // длина слайдера
-  var lineWidth = effectLine.getBoundingClientRect().width;
-  // положение центра пина на слайдере относительно начала слайдера
-  var pinCenter = effectLevelSlider.getBoundingClientRect().x + effectLevelSlider.getBoundingClientRect().width / 2 - effectLine.getBoundingClientRect().x;
-  var newEffectValue = Math.round(pinCenter * EFFECT_MAX_VALUE / lineWidth);
-  return newEffectValue;
-};
-
 // изменяем уровень насыщенности фильтра
 effectLevelSlider.addEventListener('mouseup', function () {
-  effectLevelValue.value = getEffectValue();
-  image.style = effectFunctions[currentEffect](effectLevelValue.value);
+  applyEffect();
 });
-
-// При переключении фильтра, уровень эффекта должен сразу cбрасываться до начального состояния,
-// т.е. логика по определению уровня насыщенности должна срабатывать не только при «перемещении» слайдера,
-// но и при переключении фильтров.
 
