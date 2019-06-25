@@ -8,6 +8,7 @@ var effectLine = document.querySelector('.effect-level__line');
 var effectLevelSlider = document.querySelector('.effect-level__pin');
 var effectLevelDepth = document.querySelector('.effect-level__depth');
 var effectLevelValue = document.querySelector('.effect-level__value');
+var comment = document.querySelector('.text__description');
 
 var currentEffect = 'none';
 
@@ -33,10 +34,20 @@ cancelUpload.addEventListener('click', function () {
 
 // закрыть форму при нажатии на Esc
 window.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === 27) {
+  if (evt.keyCode === 27 && evt.target !== comment) {
     fileUpload.value = '';
     closeImageEditForm();
   }
+});
+
+// валидация
+comment.addEventListener('invalid', function () {
+  if (comment.validity.tooLong) {
+    comment.setCustomValidity('Длина комментария не должна превышать 140 символов');
+  } else {
+    comment.setCustomValidity('');
+  }
+  comment.value = '';
 });
 
 
