@@ -126,7 +126,73 @@ for (i = 0; i < effectInputs.length; i++) {
 }
 
 // изменяем уровень насыщенности фильтра
-effectLevelSlider.addEventListener('mouseup', function () {
-  applyEffect();
-});
+// effectLevelSlider.addEventListener('mouseup', function () {
+//   applyEffect();
+// });
 
+var minSliderX = 284;
+var maxSliderX = 737;
+
+effectLevelSlider.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+
+  var startCoords = {
+    x: evt.clientX
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var newCoord;
+
+    // не даем выйти за пределы слайдера
+    if (moveEvt.clientX < minSliderX) {
+      newCoord = minSliderX;
+    } else {
+      if (moveEvt.clientX > maxSliderX) {
+        newCoord = maxSliderX;
+      } else {
+        newCoord = moveEvt.clientX;
+      }
+    }
+
+    var shift = {
+      x: newCoord - startCoords.x
+    };
+
+    // обновляем координаты
+    startCoords = {
+      x: newCoord
+    };
+
+    // длина слайдера
+    var lineWidth = effectLine.getBoundingClientRect().width;
+    // положение центра пина на слайдере относительно начала слайдера
+    var pinCenterOld = effectLevelSlider.getBoundingClientRect().x + effectLevelSlider.getBoundingClientRect().width / 2 - effectLine.getBoundingClientRect().x;
+    // новое положение центра пина
+    var pinCenterNew = pinCenterOld + shift.x;
+
+    // пересчитать новое значение эффекта
+    var newEffectValue = Math.round(pinCenterNew * EFFECT_MAX_VALUE / lineWidth);
+    effectLevelValue.value = newEffectValue;
+
+    // отрисовать слайдер и полоску
+    changeSliderPosition();
+
+    // применить эффект к изображению
+    applyEffect();
+
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
