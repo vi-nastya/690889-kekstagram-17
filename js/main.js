@@ -91,6 +91,7 @@ var applyEffect = function () {
 
 var removeEffects = function () {
   image.className = 'img-upload__preview';
+  image.style.filter = '';
 };
 
 var effectInputs = [];
