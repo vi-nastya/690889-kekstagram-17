@@ -126,17 +126,16 @@ for (i = 0; i < effectInputs.length; i++) {
   effectInputs[i].addEventListener('change', onEffectChange(i));
 }
 
-// изменяем уровень насыщенности фильтра
-// effectLevelSlider.addEventListener('mouseup', function () {
-//   applyEffect();
-// });
-
-var minSliderX = 284;
-var maxSliderX = 737;
+var minSliderX;
+var maxSliderX;
 
 effectLevelSlider.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
 
+  if (currentEffect !== 'none') {
+    minSliderX = effectLine.getBoundingClientRect().x;
+    maxSliderX = effectLine.getBoundingClientRect().x + effectLine.getBoundingClientRect().width;
+  }
 
   var startCoords = {
     x: evt.clientX
