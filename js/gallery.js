@@ -1,35 +1,21 @@
 'use strict';
+
 (function () {
-  var NUMBER_OF_PHOTOS = 25;
-
-  var generatedPictures = [];
-  for (var i = 0; i < NUMBER_OF_PHOTOS; i++) {
-    generatedPictures.push(window.makePicture(i));
-  }
-
-  // create html elements for pictures
-  var pictureTemplate = document.querySelector('#picture').content.querySelector('a');
-
-  var fragment = document.createDocumentFragment();
-
-  var renderPicture = function (picture) {
-    var pictureElement = pictureTemplate.cloneNode(true);
-    var image = pictureElement.querySelector('img');
-    image.src = picture.url;
-
-    var likes = pictureElement.querySelector('.picture__likes');
-    likes.textContent = picture.likes;
-
-    var comments = pictureElement.querySelector('.picture__comments');
-    comments.textContent = picture.comments.length;
-    return pictureElement;
+  var successHandler = function (data) {
+    window.render(data);
   };
 
-  for (i = 0; i < NUMBER_OF_PHOTOS; i++) {
-    fragment.appendChild(renderPicture(generatedPictures[i]));
-  }
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
 
-  // insert to .pictures
-  var pictures = document.querySelector('.pictures');
-  pictures.appendChild(fragment);
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.load(successHandler, errorHandler);
 })();
