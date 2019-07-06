@@ -31,6 +31,17 @@
     return results;
   };
 
+
+  var urlsComparator = function (left, right) {
+    if (left > right) {
+      return 1;
+    } else if (left < right) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
   var updateGalleryData = function () {
     switch (currentFilter) {
       case 'popular':
@@ -38,20 +49,18 @@
       case 'new':
         return getArraySubset(data, 10);
       case 'discussed': {
-        return data.sort(function (image1, image2) {
-          return image2.comments.length - image1.comments.length;
+        // if numbers of comments are the same, sort based on URL
+        return data.slice(0).sort(function (image1, image2) {
+          var rankDiff = image2.comments.length - image1.comments.length;
+          if (rankDiff === 0) {
+            rankDiff = urlsComparator(image2.url - image1.url);
+          }
+          return rankDiff;
         });
       }
       default:
         return data;
     }
-    // sort based on filter
-  };
-
-  var onFilterChange = function () {
-    // render
-    console.log(updateGalleryData())
-    window.render(updateGalleryData());
   };
 
   var generateButtonEventListener = function (filterName, filterButton) {
@@ -62,7 +71,7 @@
       });
       filterButton.classList.add('img-filters__button--active');
       currentFilter = filterName;
-      onFilterChange(data);
+      window.render(updateGalleryData());
     });
   };
 
