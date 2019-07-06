@@ -1,6 +1,7 @@
 'use strict';
 
 //(function () {
+  var NEW_FILTER_SAMPLE_SIZE = 10;
   var filters = document.querySelector('.img-filters');
 
   var filterButtons = {
@@ -10,12 +11,7 @@
   };
 
   var currentFilter = 'popular';
-
   var data = [];
-  // sorting functions
-  // popular - ничего не менять
-  // new - 10 случайных неповторяющихся
-  // discussed - по комментариям
 
 
   var getArraySubset = function (array, size) {
@@ -42,12 +38,12 @@
     }
   };
 
-  var updateGalleryData = function () {
+  var applyFilterToData = function () {
     switch (currentFilter) {
       case 'popular':
         return data;
       case 'new':
-        return getArraySubset(data, 10);
+        return getArraySubset(data, NEW_FILTER_SAMPLE_SIZE);
       case 'discussed': {
         // if numbers of comments are the same, sort based on URL
         return data.slice(0).sort(function (image1, image2) {
@@ -63,21 +59,31 @@
     }
   };
 
+  var updateFilter = function (filterName) {
+    var currentfilterButton = filterButtons[filterName];
+    Object.values(filterButtons).forEach(function (button) {
+      button.classList.remove('img-filters__button--active');
+    });
+    currentfilterButton.classList.add('img-filters__button--active');
+    currentFilter = filterName;
+  };
+
+  var onFilterChange = window.debounce(function (filterName) {
+    updateFilter(filterName);
+    window.render(applyFilterToData());
+  });
+
   var generateButtonEventListener = function (filterName, filterButton) {
     filterButton.addEventListener('click', function (evt) {
       evt.preventDefault();
-      Object.values(filterButtons).forEach(function (button) {
-        button.classList.remove('img-filters__button--active');
-      });
-      filterButton.classList.add('img-filters__button--active');
-      currentFilter = filterName;
-      window.render(updateGalleryData());
+      onFilterChange(filterName);
+
     });
   };
 
   var successHandler = function (loadedData) {
     data = loadedData;
-    window.render(updateGalleryData(data));
+    window.render(applyFilterToData());
     filters.classList.remove('img-filters--inactive');
 
     Object.entries(filterButtons).forEach(function ([filterName, filterButton]) {
