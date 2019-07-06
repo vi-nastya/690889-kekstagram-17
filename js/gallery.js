@@ -1,13 +1,81 @@
 'use strict';
 
-(function () {
+//(function () {
   var filters = document.querySelector('.img-filters');
 
-  var successHandler = function (data) {
-    window.render(data);
-
-    filters.classList.remove('img-filters--inactive');
+  var filterButtons = {
+    popular: document.querySelector('#filter-popular'),
+    new: document.querySelector('#filter-new'),
+    discussed: document.querySelector('#filter-discussed')
   };
+
+  var currentFilter = 'popular';
+
+  var data = [];
+  // sorting functions
+  // popular - ничего не менять
+  // new - 10 случайных неповторяющихся
+  // discussed - по комментариям
+
+
+  var getArraySubset = function (array, size) {
+    var results = [];
+    var subsetInd = {};
+    while (results.length < size && results.length < array.length) {
+      var index = Math.trunc(Math.random() * array.length);
+      if (!subsetInd[index]) {
+        results.push(array[index]);
+        subsetInd[index] = true;
+      }
+    }
+    return results;
+  };
+
+  var updateGalleryData = function () {
+    switch (currentFilter) {
+      case 'popular':
+        return data;
+      case 'new':
+        return getArraySubset(data, 10);
+      case 'discussed': {
+        return data.sort(function (image1, image2) {
+          return image2.comments.length - image1.comments.length;
+        });
+      }
+      default:
+        return data;
+    }
+    // sort based on filter
+  };
+
+  var onFilterChange = function () {
+    // render
+    console.log(updateGalleryData())
+    window.render(updateGalleryData());
+  };
+
+  var generateButtonEventListener = function (filterName, filterButton) {
+    filterButton.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      Object.values(filterButtons).forEach(function (button) {
+        button.classList.remove('img-filters__button--active');
+      });
+      filterButton.classList.add('img-filters__button--active');
+      currentFilter = filterName;
+      onFilterChange(data);
+    });
+  };
+
+  var successHandler = function (loadedData) {
+    data = loadedData;
+    window.render(updateGalleryData(data));
+    filters.classList.remove('img-filters--inactive');
+
+    Object.entries(filterButtons).forEach(function ([filterName, filterButton]) {
+      generateButtonEventListener(filterName, filterButton);
+    });
+  };
+
 
   var errorHandler = function (errorMessage) {
     var node = document.createElement('div');
@@ -23,4 +91,4 @@
   };
 
   window.load(successHandler, errorHandler);
-})();
+//})();
