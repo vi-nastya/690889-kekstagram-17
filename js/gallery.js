@@ -1,6 +1,6 @@
 'use strict';
 
-//(function () {
+(function () {
   var NEW_FILTER_SAMPLE_SIZE = 10;
   var filters = document.querySelector('.img-filters');
 
@@ -86,7 +86,9 @@
     window.render(applyFilterToData());
     filters.classList.remove('img-filters--inactive');
 
-    Object.entries(filterButtons).forEach(function ([filterName, filterButton]) {
+    Object.entries(filterButtons).forEach(function (keyValuePair) {
+      var filterName = keyValuePair[0];
+      var filterButton = keyValuePair[1];
       generateButtonEventListener(filterName, filterButton);
     });
   };
@@ -106,4 +108,4 @@
   };
 
   window.load(successHandler, errorHandler);
-//})();
+})();
