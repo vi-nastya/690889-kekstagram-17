@@ -15,14 +15,6 @@
     bigPicture.querySelector('.social__caption').textContent = pictureToShow.description;
 
     // add comments
-    //     <li class="social__comment">
-    //        <img class="social__picture" src="img/avatar-
-    //        {{случайное число от 1 до 6}}.svg"
-    //        alt="Аватар комментатора фотографии"
-    //        width="35" height="35">
-    //
-    // <p class="social__text">{{текст комментария}}</p>
-    // </li>
     var fragment = document.createDocumentFragment();
 
     pictureToShow.comments.forEach(function (currentComment) {
