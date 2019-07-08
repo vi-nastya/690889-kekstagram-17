@@ -3,7 +3,6 @@
 (function () {
 // show big picture
   setTimeout(function () {
-    console.log(window.galleryData[0]);
     var bigPicture = document.querySelector('.big-picture');
     var pictureToShow = window.galleryData[0];
     // add url
