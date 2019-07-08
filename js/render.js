@@ -16,7 +16,16 @@
     return pictureElement;
   };
 
+  var cleanGallery = function () {
+    var pictures = document.querySelector('.pictures');
+    var images = pictures.querySelectorAll('.picture');
+    Array.from(images).forEach(function (node) {
+      pictures.removeChild(node);
+    });
+  };
+
   window.render = function (picturesData) {
+    cleanGallery();
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < picturesData.length; i++) {
       fragment.appendChild(renderPicture(picturesData[i]));
