@@ -40,6 +40,9 @@
 
     bigPicture.querySelector('.social__comments').appendChild(fragment);
 
+
+    bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+    bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
     bigPicture.classList.remove('hidden');
   }, 1000);
 })();
