@@ -11,7 +11,7 @@
   };
 
   var currentFilter = 'popular';
-  var data = [];
+  window.galleryData = [];
 
 
   var getArraySubset = function (array, size) {
@@ -41,12 +41,12 @@
   var applyFilterToData = function () {
     switch (currentFilter) {
       case 'popular':
-        return data;
+        return window.galleryData;
       case 'new':
-        return getArraySubset(data, NEW_FILTER_SAMPLE_SIZE);
+        return getArraySubset(window.galleryData, NEW_FILTER_SAMPLE_SIZE);
       case 'discussed': {
         // if numbers of comments are the same, sort based on URL
-        return data.slice(0).sort(function (image1, image2) {
+        return window.galleryData.slice(0).sort(function (image1, image2) {
           var rankDiff = image2.comments.length - image1.comments.length;
           if (rankDiff === 0) {
             rankDiff = urlsComparator(image2.url - image1.url);
@@ -55,7 +55,7 @@
         });
       }
       default:
-        return data;
+        return window.galleryData;
     }
   };
 
@@ -82,7 +82,7 @@
   };
 
   var successHandler = function (loadedData) {
-    data = loadedData;
+    window.galleryData = loadedData;
     window.render(applyFilterToData());
     filters.classList.remove('img-filters--inactive');
 
@@ -108,4 +108,22 @@
   };
 
   window.load(successHandler, errorHandler);
+
+  // track click on picture
+  var findPictureDataByUrl = function (currentUrl) {
+    return window.galleryData.filter(function (picture) {
+      return picture.url === currentUrl;
+    })[0];
+  };
+
+  var pictures = document.querySelector('.pictures');
+
+  pictures.addEventListener('click', function (evt) {
+    if (evt.target.classList.contains('picture__img')) {
+      var currentUrl = evt.target.getAttribute('src');
+      var pictureData = findPictureDataByUrl(currentUrl);
+      window.renderBigPicture(pictureData);
+    }
+  });
+
 })();

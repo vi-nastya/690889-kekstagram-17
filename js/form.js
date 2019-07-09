@@ -51,6 +51,41 @@
   });
 
 
+  var removeDuplicates = function (array) {
+
+    return array.filter(function (item, index) {
+      return (array.indexOf(item) === index);
+    });
+  };
+
+  // валидация тегов
+  // TODO: проверить, что теги разделяются пробелами
+  var tagInputField = document.querySelector('.text__hashtags');
+
+  tagInputField.addEventListener('input', function () {
+    var tags = tagInputField.value.toLowerCase().split(' ');
+
+    // проверки на количество тегов
+    if (tags.length > 5) {
+      tagInputField.setCustomValidity('Количество тегов не должно быть больше 5');
+    } else if (tags.length > removeDuplicates(tags).length) {
+      tagInputField.setCustomValidity('Теги не должны повторяться');
+    } else {
+      tagInputField.setCustomValidity('');
+    }
+
+    // проверки для каждого тега
+    tags.forEach(function (tag) {
+      if (tag[0] !== '#') {
+        tagInputField.setCustomValidity('Тег должен начинаться с символа #');
+      } else if (tag.length < 2) {
+        tagInputField.setCustomValidity('Тег не может состоять только из символа #');
+      } else if (tag.length > 20) {
+        tagInputField.setCustomValidity('Длина тега не может быть больше 20 символов');
+      }
+    });
+  });
+
   var EFFECT_MAX_VALUE = 100;
   var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
   var effectFunctions = {
