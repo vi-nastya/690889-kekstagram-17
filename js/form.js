@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+  var imageUploadForm = document.querySelector('.img-upload__form');
   var fileUpload = document.querySelector('#upload-file');
   var cancelUpload = document.querySelector('#upload-cancel');
   var editImage = document.querySelector('.img-upload__overlay');
@@ -10,11 +11,16 @@
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
   var comment = document.querySelector('.text__description');
+  var tagInputField = document.querySelector('.text__hashtags');
 
   var currentEffect = 'none';
 
   var closeImageEditForm = function () {
     editImage.classList.add('hidden');
+  };
+
+  var clearFormData = function () {
+    imageUploadForm.reset();
   };
 
   // показать форму редактирования изображения
@@ -28,14 +34,14 @@
 
   // закрыть форму и сбросить значение #upload-file
   cancelUpload.addEventListener('click', function () {
-    fileUpload.value = '';
+    clearFormData();
     closeImageEditForm();
   });
 
   // закрыть форму при нажатии на Esc
   window.addEventListener('keydown', function (evt) {
     if (evt.keyCode === 27 && evt.target !== comment) {
-      fileUpload.value = '';
+      clearFormData();
       closeImageEditForm();
     }
   });
@@ -60,8 +66,6 @@
 
   // валидация тегов
   // TODO: проверить, что теги разделяются пробелами
-  var tagInputField = document.querySelector('.text__hashtags');
-
   tagInputField.addEventListener('input', function () {
     var tags = tagInputField.value.toLowerCase().split(' ');
 
@@ -230,5 +234,124 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
+  });
+
+
+  var successTemplate = document.querySelector('#success');
+  var successElement = successTemplate.content.cloneNode(true);
+  var successMessage = successElement.querySelector('.success');
+  var successMessageInner = successElement.querySelector('.success__inner');
+  var successButton = successElement.querySelector('.success__button');
+  successMessage.classList.add('visually-hidden');
+  document.querySelector('main').appendChild(successElement);
+
+  var errorTemplate = document.querySelector('#error');
+  var errorElement = errorTemplate.content.cloneNode(true);
+  var errorMessage = errorElement.querySelector('.error');
+  var errorMessageInner = errorElement.querySelector('.error__inner');
+  var errorButtons = errorElement.querySelector('.error__buttons');
+  errorMessage.classList.add('visually-hidden');
+  document.querySelector('main').appendChild(errorElement);
+
+  var closeSuccessMessage = function () {
+    if (!successMessage.classList.contains('visually-hidden')) {
+      successMessage.classList.add('visually-hidden');
+
+      document.removeEventListener('click', onScreenClick);
+      document.removeEventListener('keydown', onEsc);
+    }
+  };
+
+  var closeErrorMessage = function () {
+    if (!errorMessage.classList.contains('visually-hidden')) {
+      errorMessage.classList.add('visually-hidden');
+
+      document.removeEventListener('click', onScreenClick);
+      document.removeEventListener('keydown', onEsc);
+    }
+  };
+
+  // закрываем сообщения об успешной загрузке или ошибке при клике на кнопку
+  successButton.addEventListener('click', function () {
+    closeSuccessMessage();
+  });
+
+  successButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === 13) {
+      closeSuccessMessage();
+    }
+  });
+
+  errorButtons.addEventListener('click', function (evt) {
+    window.backend.save(new FormData(imageUploadForm), showSuccessMessage, showErrorMessage);
+
+    if (evt.target.textContent === 'Попробовать снова') {
+      closeErrorMessage();
+    }
+  });
+
+  errorButtons.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === 13) {
+      closeErrorMessage();
+      if (evt.target.textContent === 'Попробовать снова') {
+        window.backend.save(new FormData(imageUploadForm), showSuccessMessage, showErrorMessage);
+      } else {
+        clearFormData();
+      }
+    }
+  });
+
+  // закрываем сообщение при нажатии на клавишу Esc
+  var onEsc = function (evt) {
+    if (evt.keyCode === 27) {
+      closeSuccessMessage();
+      closeErrorMessage();
+    }
+  };
+
+  // закрываем сообщение по клику на произвольную область экрана
+  var onScreenClick = function (evt) {
+    if (evt.tagret !== successMessageInner && evt.target !== errorMessageInner) {
+      closeSuccessMessage();
+      closeErrorMessage();
+    }
+  };
+
+  var showSuccessMessage = function () {
+    if (successMessage.classList.contains('visually-hidden')) {
+      successMessage.classList.remove('visually-hidden');
+
+      // когда показываем сообщение, добавлям обработчики событий
+      document.addEventListener('click', onScreenClick);
+      document.addEventListener('keydown', onEsc);
+    }
+  };
+
+  var showErrorMessage = function () {
+    if (errorMessage.classList.contains('visually-hidden')) {
+      errorMessage.classList.remove('visually-hidden');
+
+      // когда показываем сообщение, добавлям обработчики событий
+      document.addEventListener('click', onScreenClick);
+      document.addEventListener('keydown', onEsc);
+    }
+  };
+
+
+  var onSuccess = function () {
+    closeImageEditForm();
+    clearFormData();
+    showSuccessMessage();
+  };
+
+  var onError = function () {
+    closeImageEditForm();
+    showErrorMessage();
+  };
+
+  imageUploadForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+
+    window.backend.save(new FormData(imageUploadForm), onSuccess, onError);
   });
 })();
