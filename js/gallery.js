@@ -109,4 +109,13 @@
 
   window.load(successHandler, errorHandler);
 
+  // track click on picture
+  var pictures = document.querySelector('.pictures');
+
+  pictures.addEventListener('click', function (evt) {
+    if (evt.target) {
+      
+    }
+  });
+
 })();

@@ -44,5 +44,12 @@
     bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
     bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
     bigPicture.classList.remove('hidden');
+
+    var closePicture = bigPicture.querySelector('.big-picture__cancel');
+    closePicture.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      bigPicture.classList.add('hidden');
+    })
+
   }, 1000);
 })();
