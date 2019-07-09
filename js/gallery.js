@@ -110,11 +110,19 @@
   window.load(successHandler, errorHandler);
 
   // track click on picture
+  var findPictureDataByUrl = function (currentUrl) {
+    return window.galleryData.filter(function (picture) {
+      return picture.url === currentUrl;
+    })[0];
+  };
+
   var pictures = document.querySelector('.pictures');
 
   pictures.addEventListener('click', function (evt) {
-    if (evt.target) {
-      
+    if (evt.target.classList.contains('picture__img')) {
+      var currentUrl = evt.target.getAttribute('src');
+      var pictureData = findPictureDataByUrl(currentUrl);
+      window.renderBigPicture(pictureData);
     }
   });
 
