@@ -43,6 +43,8 @@
 
   var clearFormData = function () {
     imageUploadForm.reset();
+    removeEffects();
+    currentEffect = 'none';
   };
 
   // показать форму редактирования изображения
