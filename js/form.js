@@ -45,6 +45,8 @@
     imageUploadForm.reset();
     removeEffects();
     currentEffect = 'none';
+    currentScale = MAX_SCALE;
+    applyScale();
   };
 
   // показать форму редактирования изображения
@@ -236,6 +238,41 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
+  });
+
+
+  // Изменение размеров
+  var smallerButton = document.querySelector('.scale__control--smaller');
+  var biggerButton = document.querySelector('.scale__control--bigger');
+  var scaleValue = document.querySelector('.scale__control--value');
+
+  var currentScale = 100;
+  var MAX_SCALE = 100;
+  var MIN_SCALE = 25;
+  var SCALE_STEP = 25;
+
+  var updateScaleValue = function () {
+    scaleValue.value = currentScale;
+  };
+
+  var applyScale = function () {
+    image.style.transform = 'scale(' + currentScale / 100 + ')';
+  };
+
+  smallerButton.addEventListener('click', function () {
+    if (currentScale - SCALE_STEP >= MIN_SCALE) {
+      currentScale -= SCALE_STEP;
+      updateScaleValue();
+      applyScale();
+    }
+  });
+
+  biggerButton.addEventListener('click', function () {
+    if (currentScale + SCALE_STEP <= MAX_SCALE) {
+      currentScale += SCALE_STEP;
+      updateScaleValue();
+      applyScale();
+    }
   });
 
 
