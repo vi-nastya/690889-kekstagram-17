@@ -2,6 +2,26 @@
 (function () {
   var ESC_KEYCODE = 27;
 
+  var EFFECT_MAX_VALUE = 100;
+  var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+  var EFFECT_FUNCTIONS = {
+    'chrome': function (effectValue) {
+      return 'filter: grayscale(' + effectValue / 100 + ')';
+    },
+    'sepia': function (effectValue) {
+      return 'filter: sepia(' + effectValue / 100 + ')';
+    },
+    'marvin': function (effectValue) {
+      return 'filter: invert(' + effectValue + '%)';
+    },
+    'phobos': function (effectValue) {
+      return 'filter: blur(' + effectValue / 100 * 3 + 'px)';
+    },
+    'heat': function (effectValue) {
+      return 'filter: brightness(' + (1 + effectValue / 100 * 2) + ')';
+    }
+  };
+
   var imageUploadForm = document.querySelector('.img-upload__form');
   var fileUpload = document.querySelector('#upload-file');
   var cancelUpload = document.querySelector('#upload-cancel');
@@ -58,7 +78,6 @@
     comment.value = '';
   });
 
-
   var removeDuplicates = function (array) {
 
     return array.filter(function (item, index) {
@@ -92,26 +111,6 @@
     });
   });
 
-  var EFFECT_MAX_VALUE = 100;
-  var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
-  var EFFECT_FUNCTIONS = {
-    'chrome': function (effectValue) {
-      return 'filter: grayscale(' + effectValue / 100 + ')';
-    },
-    'sepia': function (effectValue) {
-      return 'filter: sepia(' + effectValue / 100 + ')';
-    },
-    'marvin': function (effectValue) {
-      return 'filter: invert(' + effectValue + '%)';
-    },
-    'phobos': function (effectValue) {
-      return 'filter: blur(' + effectValue / 100 * 3 + 'px)';
-    },
-    'heat': function (effectValue) {
-      return 'filter: brightness(' + (1 + effectValue / 100 * 2) + ')';
-    }
-  };
-
   var changeSliderPosition = function () {
     effectLevelDepth.style.width = effectLevelValue.value + '%';
     effectLevelSlider.style.left = effectLevelValue.value + '%';
@@ -139,7 +138,6 @@
   for (var i = 0; i < EFFECTS.length; i++) {
     effectInputs.push(document.querySelector('#effect-' + EFFECTS[i]));
   }
-
 
   var onEffectChange = function (effectIndex) {
     var listener = function () {
