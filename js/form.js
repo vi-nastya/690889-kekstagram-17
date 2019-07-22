@@ -92,7 +92,7 @@
   // валидация тегов
   // TODO: проверить, что теги разделяются пробелами
   tagInputField.addEventListener('input', function () {
-    var tags = tagInputField.value.toLowerCase().split(' ');
+    var tags = tagInputField.value.toLowerCase().split(/\s+/g);
 
     // проверки на количество тегов
     if (tags.length > 5) {
@@ -111,6 +111,8 @@
         tagInputField.setCustomValidity('Тег не может состоять только из символа #');
       } else if (tag.length > 20) {
         tagInputField.setCustomValidity('Длина тега не может быть больше 20 символов');
+      } else if (tag.indexOf('#', 1) >= 0) {
+        tagInputField.setCustomValidity('Теги должны разделяться пробелами');
       }
     });
   });
