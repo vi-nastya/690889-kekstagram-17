@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var ESC_KEYCODE = 27;
+
   var imageUploadForm = document.querySelector('.img-upload__form');
   var fileUpload = document.querySelector('#upload-file');
   var cancelUpload = document.querySelector('#upload-cancel');
@@ -40,7 +42,7 @@
 
   // закрыть форму при нажатии на Esc
   window.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === 27 && evt.target !== comment && evt.target !== tagInputField) {
+    if (evt.keyCode === ESC_KEYCODE && evt.target !== comment && evt.target !== tagInputField) {
       clearFormData();
       closeImageEditForm();
     }
@@ -92,7 +94,7 @@
 
   var EFFECT_MAX_VALUE = 100;
   var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
-  var effectFunctions = {
+  var EFFECT_FUNCTIONS = {
     'chrome': function (effectValue) {
       return 'filter: grayscale(' + effectValue / 100 + ')';
     },
@@ -125,7 +127,7 @@
   };
 
   var applyEffect = function () {
-    image.style = effectFunctions[currentEffect](getEffectValue());
+    image.style = EFFECT_FUNCTIONS[currentEffect](getEffectValue());
   };
 
   var removeEffects = function () {
@@ -303,7 +305,7 @@
 
   // закрываем сообщение при нажатии на клавишу Esc
   var onEsc = function (evt) {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === ESC_KEYCODE) {
       closeSuccessMessage();
       closeErrorMessage();
     }
