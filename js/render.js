@@ -1,7 +1,8 @@
 'use strict';
 (function () {
-  // create html elements for pictures
+  var ESC_KEYCODE = 27;
 
+  // create html elements for pictures
   var renderPicture = function (picture) {
     var pictureTemplate = document.querySelector('#picture').content.querySelector('a');
     var pictureElement = pictureTemplate.cloneNode(true);
@@ -109,7 +110,8 @@
     commentsSection.appendChild(renderedComments);
 
     // показать следующие 5 комментариев
-    var onMoreCommentsClick = function () {
+    var onMoreCommentsClick = function (evt) {
+      evt.stopPropagation();
       var newCommentsToRender = getCommentsToRender(pictureToShow.comments, shownComments);
       if (newCommentsToRender) {
         renderedComments = renderComments(newCommentsToRender);
@@ -124,15 +126,33 @@
 
     showMoreCommentsButton.addEventListener('click', onMoreCommentsClick);
 
-
     bigPicture.classList.remove('hidden');
 
-    var closePicture = bigPicture.querySelector('.big-picture__cancel');
-    closePicture.addEventListener('click', function (evt) {
-      evt.preventDefault();
+    var resetBigPucture = function () {
       bigPicture.classList.add('hidden');
       commentsSection.innerHTML = '';
+      shownComments = 0;
+      showMoreCommentsButton.removeEventListener('click', onMoreCommentsClick);
+    };
+
+    var onEscPress = function (evt) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        evt.preventDefault();
+        resetBigPucture();
+      }
+    };
+
+    document.addEventListener('keydown', onEscPress);
+
+    var closePicture = bigPicture.querySelector('.big-picture__cancel');
+
+    closePicture.addEventListener('click', function (evt) {
+      evt.preventDefault();
+      resetBigPucture();
+      document.removeEventListener('keydown', onEscPress);
     });
+
+
   };
 
 })();
