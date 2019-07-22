@@ -40,7 +40,7 @@
 
   // закрыть форму при нажатии на Esc
   window.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === 27 && evt.target !== comment) {
+    if (evt.keyCode === 27 && evt.target !== comment && evt.target !== tagInputField) {
       clearFormData();
       closeImageEditForm();
     }
@@ -116,7 +116,7 @@
   };
 
   var getEffectValue = function () {
-  // длина слайдера
+    // длина слайдера
     var lineWidth = effectLine.getBoundingClientRect().width;
     // положение центра пина на слайдере относительно начала слайдера
     var pinCenter = effectLevelSlider.getBoundingClientRect().x + effectLevelSlider.getBoundingClientRect().width / 2 - effectLine.getBoundingClientRect().x;
