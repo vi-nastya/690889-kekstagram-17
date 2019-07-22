@@ -48,9 +48,7 @@
         // if numbers of comments are the same, sort based on URL
         return window.galleryData.slice(0).sort(function (image1, image2) {
           var rankDiff = image2.comments.length - image1.comments.length;
-          if (rankDiff === 0) {
-            rankDiff = urlsComparator(image2.url - image1.url);
-          }
+          rankDiff = (rankDiff === 0) ? urlsComparator(image2.url - image1.url) : rankDiff;
           return rankDiff;
         });
       }
