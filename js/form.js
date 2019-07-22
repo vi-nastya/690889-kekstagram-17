@@ -2,6 +2,11 @@
 (function () {
   var ESC_KEYCODE = 27;
 
+  var DEFAULT_SCALE = 100;
+  var MAX_SCALE = 100;
+  var MIN_SCALE = 25;
+  var SCALE_STEP = 25;
+
   var EFFECT_MAX_VALUE = 100;
   var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
   var EFFECT_FUNCTIONS = {
@@ -45,7 +50,7 @@
     imageUploadForm.reset();
     removeEffects();
     currentEffect = 'none';
-    currentScale = MAX_SCALE;
+    currentScale = DEFAULT_SCALE;
     applyScale();
   };
 
@@ -248,10 +253,8 @@
   var biggerButton = document.querySelector('.scale__control--bigger');
   var scaleValue = document.querySelector('.scale__control--value');
 
-  var currentScale = 100;
-  var MAX_SCALE = 100;
-  var MIN_SCALE = 25;
-  var SCALE_STEP = 25;
+  var currentScale = DEFAULT_SCALE;
+
 
   var updateScaleValue = function () {
     scaleValue.value = currentScale;
