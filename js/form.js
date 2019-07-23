@@ -132,8 +132,7 @@
     var lineWidth = effectLine.getBoundingClientRect().width;
     // положение центра пина на слайдере относительно начала слайдера
     var pinCenter = effectLevelSlider.getBoundingClientRect().x + effectLevelSlider.getBoundingClientRect().width / 2 - effectLine.getBoundingClientRect().x;
-    var newEffectValue = Math.round(pinCenter * EFFECT_MAX_VALUE / lineWidth);
-    return newEffectValue;
+    return Math.round(pinCenter * EFFECT_MAX_VALUE / lineWidth);
   };
 
   var applyEffect = function () {
@@ -224,8 +223,7 @@
       var pinCenterNew = pinCenterOld + shift.x;
 
       // пересчитать новое значение эффекта
-      var newEffectValue = Math.round(pinCenterNew * EFFECT_MAX_VALUE / lineWidth);
-      effectLevelValue.value = newEffectValue;
+      effectLevelValue.value = Math.round(pinCenterNew * EFFECT_MAX_VALUE / lineWidth);
 
       // отрисовать слайдер и полоску
       changeSliderPosition();
@@ -355,7 +353,7 @@
 
   // закрываем сообщение по клику на произвольную область экрана
   var onScreenClick = function (evt) {
-    if (evt.tagret !== successMessageInner && evt.target !== errorMessageInner) {
+    if (evt.target !== successMessageInner && evt.target !== errorMessageInner) {
       closeSuccessMessage();
       closeErrorMessage();
     }

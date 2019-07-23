@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var ESC_KEYCODE = 27;
+  var NUM_COMMENTS_RENDERED = 5;
 
   // create html elements for pictures
   var renderPicture = function (picture) {
@@ -41,10 +42,10 @@
   var getCommentsToRender = function (comments, numShown) {
     var numCommentsToRender = 0;
     if (numShown < comments.length) {
-      if (comments.length - numShown < 5) {
+      if (comments.length - numShown < NUM_COMMENTS_RENDERED) {
         numCommentsToRender = comments.length - numShown;
       } else {
-        numCommentsToRender = 5;
+        numCommentsToRender = NUM_COMMENTS_RENDERED;
       }
       return comments.slice(numShown, numShown + numCommentsToRender);
     } else {
@@ -98,13 +99,13 @@
 
     var shownComments = 0;
     var renderedComments = null;
-    if (pictureToShow.comments.length <= 5) {
+    if (pictureToShow.comments.length <= NUM_COMMENTS_RENDERED) {
       renderedComments = renderComments(pictureToShow.comments);
       shownComments = pictureToShow.comments.length;
       hideMoreCommentsButton();
     } else {
-      renderedComments = renderComments(pictureToShow.comments.slice(0, 5));
-      shownComments = 5;
+      renderedComments = renderComments(pictureToShow.comments.slice(0, NUM_COMMENTS_RENDERED));
+      shownComments = NUM_COMMENTS_RENDERED;
     }
     shownCommentsCounter.textContent = shownComments;
     commentsSection.appendChild(renderedComments);

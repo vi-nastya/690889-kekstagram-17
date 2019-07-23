@@ -13,7 +13,6 @@
   var currentFilter = 'popular';
   window.galleryData = [];
 
-
   var getArraySubset = function (array, size) {
     var results = [];
     var subsetInd = {};
@@ -26,7 +25,6 @@
     }
     return results;
   };
-
 
   var urlsComparator = function (left, right) {
     if (left > right) {
@@ -48,7 +46,8 @@
         // if numbers of comments are the same, sort based on URL
         return window.galleryData.slice(0).sort(function (image1, image2) {
           var rankDiff = image2.comments.length - image1.comments.length;
-          rankDiff = (rankDiff === 0) ? urlsComparator(image2.url - image1.url) : rankDiff;
+          rankDiff =
+            rankDiff === 0 ? urlsComparator(image2.url - image1.url) : rankDiff;
           return rankDiff;
         });
       }
@@ -58,11 +57,11 @@
   };
 
   var updateFilter = function (filterName) {
-    var currentfilterButton = filterButtons[filterName];
+    var currentFilterButton = filterButtons[filterName];
     Object.values(filterButtons).forEach(function (button) {
       button.classList.remove('img-filters__button--active');
     });
-    currentfilterButton.classList.add('img-filters__button--active');
+    currentFilterButton.classList.add('img-filters__button--active');
     currentFilter = filterName;
   };
 
@@ -75,7 +74,6 @@
     filterButton.addEventListener('click', function (evt) {
       evt.preventDefault();
       onFilterChange(filterName);
-
     });
   };
 
@@ -90,7 +88,6 @@
       generateButtonEventListener(filterName, filterButton);
     });
   };
-
 
   var errorHandler = function (errorMessage) {
     var node = document.createElement('div');
@@ -123,5 +120,4 @@
       window.renderBigPicture(pictureData);
     }
   });
-
 })();
