@@ -7,6 +7,8 @@
   var MIN_SCALE = 25;
   var SCALE_STEP = 25;
 
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var EFFECT_MAX_VALUE = 100;
   var EFFECTS = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
   var EFFECT_FUNCTIONS = {
@@ -32,6 +34,7 @@
   var cancelUpload = document.querySelector('#upload-cancel');
   var editImage = document.querySelector('.img-upload__overlay');
   var image = document.querySelector('.img-upload__preview');
+  var preview = image.querySelector('img');
   var effectLevel = document.querySelector('.img-upload__effect-level');
   var effectLine = document.querySelector('.effect-level__line');
   var effectLevelSlider = document.querySelector('.effect-level__pin');
@@ -56,6 +59,24 @@
 
   // показать форму редактирования изображения
   fileUpload.addEventListener('change', function () {
+    var file = fileUpload.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        preview.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+
+
     editImage.classList.remove('hidden');
 
     currentEffect = 'none';
